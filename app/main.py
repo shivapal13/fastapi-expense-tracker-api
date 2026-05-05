@@ -1,11 +1,19 @@
 from dotenv import load_dotenv
 load_dotenv()
-from fastapi import FastAPI
-from app.database import Base,engine
-from app import models
-from app.routers import expense
-from app.routers import user
-from app.routers import auth
+import traceback
+
+try:
+    print("APP STARTING...")
+except Exception:
+    traceback.print_exc()
+
+try:
+    from fastapi import FastAPI 
+    from app import models
+    from app.routers import expense, user, auth
+    print("IMPORTS OK")
+except Exception:
+    traceback.print_exc()
 
 app=FastAPI()
 
