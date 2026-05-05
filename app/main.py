@@ -6,8 +6,6 @@ from app import models
 from app.routers import expense
 from app.routers import user
 from app.routers import auth
-import os
-print("DATABASE_URL:", os.getenv("DATABASE_URL"))
 
 models.Base.metadata.create_all(bind=engine)
 
