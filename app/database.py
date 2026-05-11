@@ -1,14 +1,13 @@
-import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
+from app.config import settings
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+DATABASE_URL=settings.database_url
 
-if not DATABASE_URL:
-    raise ValueError("DATABASE_URL is missing")
-
-# Always use SSL on Render
-engine = create_engine(
+if "localhost" in DATABASE_URL:
+  engine=create_engine(DATABASE_URL)
+else:
+   engine = create_engine(
     DATABASE_URL,
     connect_args={"sslmode": "require"}
 )
