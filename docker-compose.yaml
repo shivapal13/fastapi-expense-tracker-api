@@ -1,0 +1,23 @@
+services:
+
+  api:
+   build: .
+   ports:
+    - "8000:8000"
+
+   depends_on:
+    - db
+   environment:
+    DATABASE_URL: postgresql://postgres:Shiva%402005@db:5432/ExpenseTracker 
+
+  db:
+    image: postgres:latest 
+   
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: Shiva%402005
+      POSTGRES_DB: ExpenseTracker
+
+
+
+
