@@ -4,7 +4,7 @@ from app.config import settings
 
 DATABASE_URL=settings.database_url
 
-if "localhost" in DATABASE_URL:
+if "localhost" or "host.docker.internal" in DATABASE_URL:
   engine=create_engine(DATABASE_URL)
 else:
    engine = create_engine(
@@ -19,5 +19,5 @@ def get_db():
     db=SessionLocal()
     try:
      yield db
-    except:
+    finally:
      db.close()

@@ -1,6 +1,6 @@
 from app.database import get_db
 from app import models,schemas
-from fastapi import FastAPI,HTTPException,Depends,status,APIRouter
+from fastapi import FastAPI,HTTPException,Depends,status,APIRouter,Response
 from sqlalchemy.orm import Session
 from app.database import SessionLocal
 from app import oauth2
@@ -128,7 +128,6 @@ def getExpensebyId(id:int,db:Session=Depends(get_db),current_user:models.User=De
 
      if expense is None:
          raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="expense is not found")
-     
      return expense
 
 @router.put("/{id}")
@@ -154,12 +153,16 @@ def UpdateExpense(id:int,UpdateExpense:schemas.ExpenseUpdate,db:Session=Depends(
 @router.delete("/{id}")
 def deleteExpense(id:int,db:Session=Depends(get_db),current_user:models.User=Depends(oauth2.get_current_user)):
 
-    expense=db.query(models.Expense).filter(models.Expense.id==id,models.Expense.owner_id==current_user.id)
+    expense_query=db.query(models.Expense).filter(models.Expense.id==id)
+    expense=expense_query.first()
 
-    if expense.first() is None:
+    if expense is None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="expense is not found")
-    
-    expense.delete(synchronize_session=False)
+    if expense.owner_id!=current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)  
+    expense_query.delete(synchronize_session=False)
 
     db.commit()
-    return {"Expense  is successfully deleted"}
+    return Response(
+        status_code=status.HTTP_204_NO_CONTENT
+    )
